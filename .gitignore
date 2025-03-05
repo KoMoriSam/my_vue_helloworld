@@ -1,0 +1,11 @@
+node_modules
+*.log*
+.nuxt
+.nitro
+.cache
+.env-local
+dist
+.output
+
+public/1.js
+public/a.sh
