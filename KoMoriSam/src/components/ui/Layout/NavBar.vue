@@ -1,7 +1,10 @@
 <template>
   <div class="navbar bg-base-100 shadow-sm">
     <div class="navbar-start">
-      <a href="/" class="hidden lg:btn lg:btn-ghost lg:text-xl">
+      <a
+        @click="router.push('/')"
+        class="hidden lg:btn lg:btn-ghost lg:text-xl"
+      >
         <img src="@/assets/img/logo.png" alt="KoMoriSam" class="h-8" />
       </a>
       <div class="dropdown">
@@ -21,7 +24,7 @@
       </div>
     </div>
     <div class="navbar-center">
-      <a href="/" class="lg:hidden btn btn-ghost text-xl">
+      <a @click="router.push('/')" class="lg:hidden btn btn-ghost text-xl">
         <img src="@/assets/img/logo.png" alt="KoMoriSam" class="h-8" />
       </a>
       <div class="hidden lg:flex">
@@ -37,6 +40,9 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 import NavLinks from "./NavLinks.vue";
 import ThemeController from "../theme/ThemeController.vue";
 </script>

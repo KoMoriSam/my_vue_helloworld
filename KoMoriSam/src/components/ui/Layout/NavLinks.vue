@@ -15,8 +15,6 @@
 import { useRoute } from "vue-router";
 const route = useRoute();
 
-// defineProps(["links"]);
-
 import { ref } from "vue";
 
 const navLinks = ref([
