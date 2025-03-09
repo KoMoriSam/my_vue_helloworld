@@ -1,14 +1,14 @@
 <template>
   <main
-    class="flex flex-col lg:flex-row mx-12 my-12 items-start lg:items-center justify-center gap-5 lg:gap-10"
+    class="flex flex-col md:flex-row mx-12 my-12 items-start md:items-center justify-center md:justify-evenly gap-5 lg:gap-10"
   >
     <img
       :src="imageSrc"
       :alt="imageAlt"
-      class="w-auto h-50 lg:w-50 lg:h-auto"
+      class="h-50 lg:w-50 lg:h-auto lg:basis-3xs"
     />
-    <div class="divider lg:divider-horizontal"></div>
-    <article class="prose lg:prose-xl">
+    <div class="divider md:divider-horizontal lg:basis-3xs"></div>
+    <article class="prose lg:prose-xl lg:basis-3xl">
       <h1>{{ title }}</h1>
       <p>{{ description }}</p>
       <slot></slot>

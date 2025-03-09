@@ -1,12 +1,13 @@
 <template>
   <div class="dropdown">
     <div tabindex="0" role="button" class="btn btn-ghost m-1">
-      <i :class="currentTheme.icon"></i>主题
-      <i class="ri-arrow-down-s-line"></i>
+      <i :class="currentTheme.icon" class="text-base lg:text-xl"></i>
+      <span class="hidden lg:block"> 主题 </span>
+      <i class="ri-arrow-down-s-line hidden lg:block"></i>
     </div>
     <ul
       tabindex="0"
-      class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-5 w-max p-0 shadow"
+      class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-5 right-0 w-max p-0 shadow"
     >
       <li v-for="style in themeList" :key="style.value">
         <div class="relative inline-block">

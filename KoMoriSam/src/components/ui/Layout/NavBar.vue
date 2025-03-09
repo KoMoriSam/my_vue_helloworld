@@ -9,11 +9,7 @@
       </a>
       <div class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-          <label class="swap swap-rotate">
-            <input type="checkbox" />
-            <i class="swap-off fill-current ri-menu-line text-xl"></i>
-            <i class="swap-on fill-current ri-close-circle-line text-xl"></i>
-          </label>
+          <i class="fill-current ri-menu-line text-base lg:text-xl"></i>
         </div>
         <ul
           tabindex="0"
