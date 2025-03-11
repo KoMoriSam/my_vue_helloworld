@@ -1,5 +1,5 @@
 <template>
-  <main class="lg:basis-[50%]">
+  <main class="lg:basis-[70%]">
     <Loading v-show="isLoading" />
     <div v-show="!isLoading">
       <article class="prose prose-2xl lg:prose lg:prose-2xl">
@@ -21,7 +21,7 @@ import VueMarkdown from "vue-markdown-render";
 import Loading from "@/components/ui/Loading.vue";
 
 const props = defineProps({
-  currentId: { type: [Number, String], required: true },
+  currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
 });
 

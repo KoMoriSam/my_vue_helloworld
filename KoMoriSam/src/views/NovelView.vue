@@ -6,17 +6,21 @@
       class="flex flex-col lg:flex-row m-12 items-start lg:justify-evenly gap-5 lg:gap-10"
       v-show="!isLoading"
     >
-      <div class="lg:basis-[50%]">
+      <div class="lg:basis-[25%]">
         <article class="prose lg:prose-xl">
           <h1>向远方</h1>
         </article>
         <ChList
           title="章节列表"
-          :current-id
+          :current-id="currentId"
           :chapters
           @handle-change="handleChange"
         />
-        <PreNext :current-id :chapters @handle-change="handleChange" />
+        <PreNext
+          :current-id="currentId"
+          :chapters
+          @handle-change="handleChange"
+        />
       </div>
       <div class="divider lg:divider-horizontal lg:basis-3xs"></div>
 

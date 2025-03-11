@@ -24,7 +24,7 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  currentId: { type: [Number, String], required: true },
+  currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
 });
 
