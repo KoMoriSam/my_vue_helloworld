@@ -39,9 +39,7 @@ const currentId = ref(null);
 onMounted(async () => {
   try {
     const res = await fetch("/assets/markdown/novel/list.json");
-
     const data = await res.json();
-
     chapters.value = data;
     currentId.value = chapters.value[0].options[0].id;
   } finally {
