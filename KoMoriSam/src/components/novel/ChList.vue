@@ -1,103 +1,90 @@
 <template>
-  <main class="my-6">
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">{{ title }}</legend>
-      <div class="join">
-        <select
-          class="select select-sm join-item"
-          v-model="selectedId"
-          @change="handleChange"
-        >
-          <option disabled :value="null">请选择章节</option>
-          <template v-for="group in chapters" :key="group.label">
-            <optgroup :label="group.label">
-              <option
-                v-for="(chapter, idx) in group.options"
-                :key="idx"
-                :value="chapter.id"
-              >
-                <!-- 章节状态指示 -->
-                {{ chapter.read ? "✔️" : "💠" }}
+  <main class="menu bg-base-100 rounded-box w-full">
+    <ul>
+      <li>
+        <details false>
+          <summary class="font-bold">{{ title }}</summary>
 
-                <!-- 最近更新标记 -->
-                {{ isRecent(chapter.updated) && !chapter.read ? "🆕" : "" }}
+          <ul>
+            <li v-for="group in chapters" :key="group.label">
+              <details false>
+                <summary class="font-bold">{{ group.label }}</summary>
+                <ul>
+                  <li v-for="chapter in group.options" :key="chapter.id">
+                    <a
+                      @click="handleChange(chapter)"
+                      :class="chapter.id == currentId ? 'bg-primary' : ''"
+                      class="my-1"
+                    >
+                      <!-- 章节状态指示 -->
+                      <i
+                        :class="
+                          chapter.read
+                            ? 'status status-success'
+                            : 'status status-info animate-bounce'
+                        "
+                      ></i>
 
-                <!-- 章节名称 -->
-                {{ chapter.name }}
+                      <!-- 章节名称 -->
+                      <span>{{ chapter.name }}</span>
 
-                <!-- 更新时间 -->
-                {{ formatDate(chapter.updated) }}
-              </option>
-            </optgroup>
-          </template>
-          <option disabled>未完待续</option>
-        </select>
-        <button class="btn btn-sm join-item">刷新</button>
-      </div>
-    </fieldset>
+                      <!-- 更新时间 -->
+                      <span class="badge"
+                        ><span class="hidden lg:inline">更新时间</span
+                        >{{ formatDate(chapter.updated) }}</span
+                      >
+
+                      <span
+                        :class="
+                          isRecent(chapter.updated) && !chapter.read
+                            ? 'badge badge-info text-xs'
+                            : ''
+                        "
+                        >{{
+                          isRecent(chapter.updated) && !chapter.read
+                            ? "New"
+                            : ""
+                        }}</span
+                      >
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </details>
+      </li>
+    </ul>
   </main>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  title: String,
-  modelValue: [String, Number], // 接收父组件管理的ID
-  chapters: {
-    type: Array,
-    default: () => [],
-    validator: (groups) =>
-      groups.every(
-        (g) =>
-          "label" in g &&
-          "options" in g &&
-          g.options.every(
-            (ch) =>
-              "id" in ch && "name" in ch && "updated" in ch && "read" in ch
-          )
-      ),
-  },
+  currentId: { type: [Number, String], required: true },
+  chapters: { type: Array, required: true },
+  title: { type: String, default: "章节列表" },
 });
 
-const emit = defineEmits(["update:modelValue", "update-read"]);
+const emit = defineEmits(["handle-change"]);
 
-const selectedId = ref(props.modelValue);
-
-// 同步父组件传入的modelValue变化
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    selectedId.value = newVal;
-  }
-);
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("zh-CN", {
+const formatDate = (dateStr) => {
+  return new Date(dateStr).toLocaleDateString("zh-CN", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
-const isRecent = (dateString) => {
-  const date = new Date(dateString);
-  return Date.now() - date < 30 * 24 * 60 * 60 * 1000;
+const isRecent = (dateStr) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  return diff < 14 * 24 * 60 * 60 * 1000; // 14 天内
 };
 
-const handleChange = () => {
-  // 通知父组件更新选中ID
-  emit("update:modelValue", selectedId.value);
-
-  // 查找对应章节并通知更新阅读状态
-  let foundChapter;
-  for (const group of props.chapters) {
-    foundChapter = group.options.find((ch) => ch.id === selectedId.value);
-    if (foundChapter) break;
-  }
-  if (foundChapter) {
-    emit("update-read", foundChapter);
-  }
+const handleChange = (chapter) => {
+  emit("handle-change", chapter);
 };
 </script>

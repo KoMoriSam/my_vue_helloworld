@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown">
+  <div class="dropdown dropdown-end">
     <div tabindex="0" role="button" class="btn btn-ghost m-1">
       <i :class="currentTheme.icon" class="text-base lg:text-xl"></i>
       <span class="hidden lg:block"> 主题 </span>
@@ -7,7 +7,7 @@
     </div>
     <ul
       tabindex="0"
-      class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-5 right-0 w-max p-0 shadow"
+      class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-5 w-max p-0 shadow"
     >
       <li v-for="style in themeList" :key="style.value">
         <div class="relative inline-block">
