@@ -1,8 +1,8 @@
 <template>
-  <main class="flex flex-wrap">
+  <main class="flex items-center justify-evenly w-full gap-10 lg:gap-12">
     <!-- 上一章 -->
     <button
-      class="btn btn-secondary m-1"
+      class="btn btn-secondary w-[40%]"
       :disabled="!hasPrevious"
       @click="handlePrev"
     >
@@ -11,7 +11,7 @@
 
     <!-- 下一章 -->
     <button
-      class="btn btn-secondary m-1"
+      class="btn btn-secondary w-[40%]"
       :disabled="!hasNext"
       @click="handleNext"
     >

@@ -1,16 +1,24 @@
 <template>
-  <main class="lg:basis-[70%]">
-    <Loading v-show="isLoading" />
-    <div v-show="!isLoading">
-      <article class="prose prose-2xl lg:prose lg:prose-2xl">
-        <vue-markdown
-          v-if="markdownContent"
-          :source="markdownContent"
-          :options
-        />
-        <h1 v-else-if="!error">请选择章节</h1>
-        <h1 v-else class="text-red-500">加载失败，请稍后重试。</h1>
-      </article>
+  <main class="lg:basis-3xl">
+    <Loading v-if="isLoading" />
+    <div v-else>
+      <vue-markdown
+        v-if="markdownContent"
+        :source="markdownContent"
+        :options
+        class="prose prose-2xl prose-p:text-justify prose-p:indent-12.5 quotes-none prose-blockquote:prose-p:not-italic prose-blockquote:prose-p:indent-0 prose-blockquote:ps-4 prose-blockquote:prose-p:text-left"
+        :class="fontStyle"
+      />
+      <h1 v-else-if="!error">请选择章节</h1>
+      <h1 v-else class="text-red-500">加载失败，请稍后重试。</h1>
+    </div>
+    <div class="join flex items-center justify-center">
+      <button class="join-item btn">«</button>
+      <button class="join-item btn">1</button>
+      <button class="join-item btn btn-active">2</button>
+      <button class="join-item btn">3</button>
+      <button class="join-item btn">4</button>
+      <button class="join-item btn">»</button>
     </div>
   </main>
 </template>
@@ -28,6 +36,7 @@ const props = defineProps({
 const isLoading = ref(false);
 const error = ref(null);
 const markdownContent = ref("");
+const fontStyle = ref("font-kai");
 
 const options = {
   html: true,
@@ -51,6 +60,7 @@ const contentUrl = computed(() => {
   const { chapter, group } = currentChapter.value;
   const volume = group.label.match(/(.*)/)?.[0]; // 提取卷名
   const fileName = chapter.name; // 章节名称
+  console.log(`/assets/markdown/novel/${volume}/${fileName}.md`);
   return `/assets/markdown/novel/${volume}/${fileName}.md`; // 生成路径
 });
 

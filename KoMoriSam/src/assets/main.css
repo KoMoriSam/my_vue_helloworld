@@ -20,4 +20,58 @@
 }
 @plugin "@tailwindcss/typography";
 @import "remixicon/fonts/remixicon.css";
-/* @import "github-markdown-css/github-markdown.css"; */
+
+@font-face {
+  font-family: ZhiSong;
+  font-display: swap;
+  src: url("fonts/LXGWNeoZhiSongPlus.ttf");
+}
+
+@font-face {
+  font-family: XiHei;
+  src: url("fonts/LXGWNeoXiHeiPlus.ttf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: WenKai;
+  font-display: swap;
+  src: url("fonts/LXGWWenKaiGBLite-Medium.ttf");
+}
+
+@font-face {
+  font-family: ZhuQue;
+  src: url("fonts/ZhuqueFangsong-Regular.ttf");
+  font-display: swap;
+}
+
+@theme {
+  --font-song: ZhiSong, "STKaiti", "KaiTi", serif;
+  --font-hei: XiHei, "STHeiti", "STXihei", "SimHei", sans-serif;
+  --font-kai: WenKai, "STKaiti", "KaiTi", cursive;
+  --font-fang: ZhuQue, "STFangsong", "FangSong", serif;
+}
+
+@layer utilities {
+  .font-song {
+    font-family: var(--font-song);
+  }
+
+  .font-hei {
+    font-family: var(--font-hei);
+  }
+
+  .font-kai {
+    font-family: var(--font-kai);
+  }
+
+  .font-fang {
+    font-family: var(--font-fang);
+  }
+
+  .prose blockquote,
+  .prose em {
+    quotes: none;
+    font-family: var(--font-fang);
+  }
+}
