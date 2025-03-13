@@ -1,6 +1,6 @@
 <template>
-  <main class="lg:basis-[75%]">
-    <Loading v-if="isLoading" />
+  <main class="flex-2">
+    <Loading size="w-32 h-32" v-if="isLoading" />
     <div v-else>
       <vue-markdown
         v-if="pages.length > 0"
@@ -12,97 +12,47 @@
       <h1 v-else-if="!error">请选择章节</h1>
       <h1 v-else class="text-red-500">加载失败，请稍后重试。</h1>
     </div>
-    <!-- 分页控件 -->
-    <div
-      v-if="pages.length > 1"
-      class="join flex items-center justify-center m-6 lg:m-12"
-    >
-      <button
-        class="join-item btn"
-        @click="handlePageChange(currentPage - 1)"
-        :disabled="currentPage === 0"
-      >
-        <i class="ri-arrow-left-s-line"></i>
-      </button>
-      <button class="join-item md:hidden btn">
-        第 {{ currentPage + 1 }} 页 / 共 {{ pages.length }} 页
-      </button>
-      <button
-        v-for="(page, idx) in pages.length"
-        :key="idx"
-        @click="handlePageChange(idx)"
-        :class="idx === currentPage ? 'btn-primary' : ''"
-        class="hidden md:flex join-item btn"
-      >
-        {{ page }}
-      </button>
-      <button
-        class="join-item btn"
-        @click="handlePageChange(currentPage + 1)"
-        :disabled="currentPage === pages.length - 1"
-      >
-        <i class="ri-arrow-right-s-line"></i>
-      </button>
-    </div>
+    <Pagination
+      v-if="pages.length > 1 && !isLoading"
+      :current-page="currentPage"
+      :total-pages="pages.length"
+      @page-change="handlePageChange"
+    />
     <slot></slot>
   </main>
 </template>
 
 <script setup>
 import { ref, watch, computed, inject } from "vue";
+import { useRouter } from "vue-router";
 import VueMarkdown from "vue-markdown-render";
 import Loading from "@/components/ui/Loading.vue";
+import Pagination from "@/components/ui/Pagination.vue"; // 引入分页组件
 
+// 路由相关
+const router = useRouter();
+
+// Props 定义
 const props = defineProps({
   currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
+  currentPage: { type: [Number, String], default: 0 },
 });
 
+// 状态管理
 const isLoading = ref(false);
 const error = ref(null);
 const fontStyle = ref("font-kai");
+const pages = ref([]); // 分页后的内容数组
+const currentPage = ref(props.currentPage || 0);
+const pageSize = 1000; // 每页字符数
+
+// Markdown 渲染选项
 const options = {
   html: true,
 };
 
-const currentPage = ref(0); // 当前页码
-const pages = ref([]); // 分页后的内容数组
-const pageSize = 1000; // 每页字符数
-
-// 分页处理函数
-const splitContent = (content) => {
-  const result = [];
-  const paragraphs = content.split("\n"); // 假设段落是通过换行符分隔的
-  let currentPageContent = "";
-
-  paragraphs.forEach((paragraph) => {
-    // 如果当前页面内容 + 该段落长度超过了最大字符数
-    if (currentPageContent.length + paragraph.length + 1 > pageSize) {
-      // 如果是新的一页，先保存当前页面内容
-      result.push(currentPageContent);
-      currentPageContent = paragraph; // 把当前段落放到新的一页
-    } else {
-      // 否则，将段落加入当前页面内容
-      if (currentPageContent.length > 0) {
-        currentPageContent += "\n"; // 添加换行符
-      }
-      currentPageContent += paragraph;
-    }
-  });
-
-  // 最后一页内容添加进去
-  if (currentPageContent.length > 0) {
-    result.push(currentPageContent);
-  }
-
-  return result;
-};
-
-const handlePageChange = (page) => {
-  currentPage.value = page;
-  handleToTop();
-};
-
+// 计算属性
 const currentChapter = computed(() => {
   for (const group of props.chapters) {
     const chapter = group.options.find((ch) => ch.id === props.currentId);
@@ -121,6 +71,42 @@ const contentUrl = computed(() => {
   return `/assets/markdown/novel/${volume}/${fileName}.md`;
 });
 
+// 方法定义
+const splitContent = (content) => {
+  const result = [];
+  const paragraphs = content.split("\n"); // 假设段落是通过换行符分隔的
+  let currentPageContent = "";
+
+  paragraphs.forEach((paragraph) => {
+    if (currentPageContent.length + paragraph.length + 1 > pageSize) {
+      result.push(currentPageContent);
+      currentPageContent = paragraph;
+    } else {
+      if (currentPageContent.length > 0) {
+        currentPageContent += "\n";
+      }
+      currentPageContent += paragraph;
+    }
+  });
+
+  if (currentPageContent.length > 0) {
+    result.push(currentPageContent);
+  }
+
+  return result;
+};
+
+const handlePageChange = (pageIndex) => {
+  router.push({
+    name: "novel",
+    params: {
+      chapterId: props.currentId,
+      page: pageIndex + 1, // 转换回路由页码格式
+    },
+  });
+  handleToTop();
+};
+
 const loadContent = async () => {
   if (!contentUrl.value) return;
 
@@ -129,10 +115,9 @@ const loadContent = async () => {
     const response = await fetch(contentUrl.value);
     if (!response.ok) throw new Error("加载失败");
     const content = await response.text();
-
-    // 处理分页
     pages.value = splitContent(content);
-    currentPage.value = 0; // 重置到第一页
+    // 优先使用路由参数
+    currentPage.value = router.currentRoute.value.params.page - 1; // 重置到第一页
     error.value = null;
   } catch (e) {
     error.value = e.message;
@@ -142,12 +127,20 @@ const loadContent = async () => {
   }
 };
 
-watch(contentUrl, loadContent, { immediate: true });
-
 const scrollToTop = inject("scrollToTop"); // 注入方法
 
-// 调用示例
 const handleToTop = () => {
   scrollToTop(); // 平滑滚动到顶部
 };
+
+// 监听器
+watch(contentUrl, loadContent, { immediate: true });
+
+watch(
+  () => router.currentRoute.value.params.page,
+  (newPage) => {
+    currentPage.value = Number(newPage) - 1;
+  },
+  { immediate: true }
+);
 </script>

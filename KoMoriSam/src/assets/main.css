@@ -22,34 +22,57 @@
 @import "remixicon/fonts/remixicon.css";
 
 @font-face {
-  font-family: ZhiSong;
-  font-display: swap;
-  src: url("fonts/LXGWNeoZhiSongPlus.ttf");
-}
-
-@font-face {
-  font-family: XiHei;
-  src: url("fonts/LXGWNeoXiHeiPlus.ttf");
+  font-family: "LXGW Neo ZhiSong";
+  src: local("LXGW Neo ZhiSong"), local("LXGWNeoZhiSong"),
+    url("fonts/LXGWNeoZhiSong.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: WenKai;
+  font-family: "LXGW Neo XiHei";
+  src: local("LXGW Neo XiHei"), local("LXGWNeoXiHei"),
+    url("fonts/LXGWNeoXiHei.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
-  src: url("fonts/LXGWWenKaiGBLite-Medium.ttf");
 }
 
 @font-face {
-  font-family: ZhuQue;
-  src: url("fonts/ZhuqueFangsong-Regular.ttf");
+  font-family: "LXGW WenKai GB Lite";
+  src: local("LXGW WenKai GB Lite"), local("LXGWWenKaiGBLite"),
+    url("fonts/LXGWWenKaiGBLite-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LXGW WenKai GB Lite";
+  src: local("LXGW WenKai GB Lite"), local("LXGWWenKaiGBLite"),
+    url("fonts/LXGWWenKaiGBLite-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Zhuque Fangsong (technical preview)";
+  src: local("Zhuque Fangsong (technical preview)"),
+    local("ZhuqueFangsong(technicalpreview)"),
+    url("fonts/ZhuqueFangsong-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
 @theme {
-  --font-song: ZhiSong, "STKaiti", "KaiTi", serif;
-  --font-hei: XiHei, "STHeiti", "STXihei", "SimHei", sans-serif;
-  --font-kai: WenKai, "STKaiti", "KaiTi", cursive;
-  --font-fang: ZhuQue, "STFangsong", "FangSong", serif;
+  --font-song: "LXGW Neo ZhiSong", "STKaiti", "KaiTi", serif;
+  --font-hei: "LXGW Neo XiHei", "STHeiti", "STXihei", "SimHei", sans-serif;
+  --font-kai: "LXGW WenKai GB Lite", "STKaiti", "KaiTi", cursive;
+  --font-fang: "Zhuque Fangsong (technical preview)", "STFangsong", "FangSong",
+    serif;
 }
 
 @layer utilities {

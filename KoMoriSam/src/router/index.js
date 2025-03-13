@@ -6,31 +6,35 @@ const router = createRouter({
     {
       path: "/:pathMatch(.*)*",
       name: "NotFound",
-      component: () => import("../views/NotFoundView.vue"),
+      component: () => import("@/views/NotFoundView.vue"),
       meta: { title: "404! | KoMoriSam" },
     },
     {
       path: "/",
       name: "home",
-      component: () => import("../views/HomeView.vue"),
+      component: () => import("@/views/HomeView.vue"),
       meta: { title: "主页 | KoMoriSam" },
     },
     {
-      path: "/novel",
+      path: "/novel/:chapterId/page/:page",
       name: "novel",
-      component: () => import("../views/NovelView.vue"),
+      component: () => import("@/views/NovelView.vue"),
+      props: (route) => ({
+        chapterId: Number(route.params.chapterId) || 1,
+        page: Number(route.params.page) || 1, // 默认第一页
+      }),
       meta: { title: "小说 | KoMoriSam" },
     },
     {
       path: "/contact",
       name: "contact",
-      component: () => import("../views/ContactView.vue"),
+      component: () => import("@/views/ContactView.vue"),
       meta: { title: "联系 | KoMoriSam" },
     },
     {
       path: "/about",
       name: "about",
-      component: () => import("../views/AboutView.vue"),
+      component: () => import("@/views/AboutView.vue"),
       meta: { title: "关于 | KoMoriSam" },
     },
   ],

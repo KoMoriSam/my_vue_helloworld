@@ -1,7 +1,6 @@
 <template>
   <button
     @click="scrollToTop"
-    :style="{ bottom, right }"
     class="fixed right-6 lg:right-12 bottom-32 btn btn-square btn-lg btn-info"
     :class="showButton ? 'opacity-100' : 'opacity-0'"
   >
@@ -12,10 +11,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
-const props = defineProps({
-  threshold: { type: Number, default: 300 }, // 显示按钮的滚动阈值
-});
-
 const showButton = ref(false);
 
 const scrollToTop = () => {
@@ -23,7 +18,7 @@ const scrollToTop = () => {
 };
 
 const handleScroll = () => {
-  showButton.value = window.scrollY > props.threshold;
+  showButton.value = window.scrollY > 300;
 };
 
 onMounted(() => {
