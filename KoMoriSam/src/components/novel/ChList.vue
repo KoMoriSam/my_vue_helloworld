@@ -1,30 +1,14 @@
 <template>
-  <main class="menu bg-base-100 rounded-box">
+  <main class="menu rounded-box w-full">
     <ul>
       <li>
-        <a
-          v-if="currentChapter"
-          class="font-bold bg-base-200 lg:py-4 my-1 lg:my-2"
-          ><span class="badge font-normal italic text-xs">当前章节</span
-          >{{ currentChapter.name }}</a
-        >
-        <a
-          v-if="latestChapter"
-          @click="handleChange(latestChapter)"
-          class="font-bold bg-info text-info-content lg:py-4 my-1 lg:my-2"
-          ><span class="badge font-normal italic text-xs">最新章节</span
-          >{{ latestChapter.name }}</a
-        >
-
-        <details class="dropdown dropdown-center w-full md:w-72 lg:w-96" false>
-          <summary class="bg-base-200 font-bold lg:py-4 my-1 lg:my-2">
-            {{ title }}
+        <details class="w-full" open>
+          <summary class="font-bold lg:py-4 mb-1 lg:mb-2">
+            <span class="badge font-normal italic text-xs">章节列表</span>向远方
           </summary>
-          <ul
-            class="menu dropdown-content bg-base-200 rounded-box z-1 p-2 w-full md:w-72 lg:w-96 shadow-sm"
-          >
+          <ul class="menu rounded-box z-1 p-2 w-full ml-0">
             <li v-for="group in chapters" :key="group.label">
-              <details false>
+              <details open>
                 <summary class="font-bold">{{ group.label }}</summary>
                 <ul>
                   <li v-for="chapter in group.options" :key="chapter.id">
@@ -59,7 +43,7 @@
                       </div>
 
                       <!-- 更新时间 -->
-                      <span
+                      <!-- <span
                         class="hidden lg:flex"
                         :class="
                           isRecent(chapter.updated) && !chapter.read
@@ -75,7 +59,7 @@
                       <span class="hidden xl:flex badge italic text-xs">
                         更新时间
                         {{ formatDate(chapter.updated) }}
-                      </span>
+                      </span> -->
                     </a>
                   </li>
                 </ul>
@@ -94,20 +78,6 @@ import { computed } from "vue";
 const props = defineProps({
   currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
-  title: { type: String, default: "章节列表" },
-});
-
-// 扁平化章节列表
-const flatChapters = computed(() => props.chapters.flatMap((g) => g.options));
-
-// 当前章节名称
-const currentChapter = computed(() => {
-  return flatChapters.value.find((ch) => ch.id == props.currentId);
-});
-
-// 获取最新章节
-const latestChapter = computed(() => {
-  return [...flatChapters.value].sort((a, b) => b.id - a.id)[0];
 });
 
 const emit = defineEmits(["handle-change"]);

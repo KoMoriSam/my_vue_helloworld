@@ -1,6 +1,6 @@
 <template>
   <main class="flex-2">
-    <Loading size="w-32 h-32" v-if="isLoading" />
+    <Loading v-if="modelValue" />
     <div v-else>
       <vue-markdown
         v-if="pages.length > 0"
@@ -13,12 +13,11 @@
       <h1 v-else class="text-red-500">加载失败，请稍后重试。</h1>
     </div>
     <Pagination
-      v-if="pages.length > 1 && !isLoading"
+      v-if="pages.length > 1 && !modelValue"
       :current-page="currentPage"
       :total-pages="pages.length"
       @page-change="handlePageChange"
     />
-    <slot></slot>
   </main>
 </template>
 
@@ -27,7 +26,7 @@ import { ref, watch, computed, inject } from "vue";
 import { useRouter } from "vue-router";
 import VueMarkdown from "vue-markdown-render";
 import Loading from "@/components/ui/Loading.vue";
-import Pagination from "@/components/ui/Pagination.vue"; // 引入分页组件
+import Pagination from "@/components/ui/Pagination.vue";
 
 // 路由相关
 const router = useRouter();
@@ -37,10 +36,13 @@ const props = defineProps({
   currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
   currentPage: { type: [Number, String], default: 0 },
+  modelValue: { type: Boolean, required: true },
 });
 
+const emit = defineEmits(["update:modelValue"]);
+
 // 状态管理
-const isLoading = ref(false);
+// const isLoading = ref(true);
 const error = ref(null);
 const fontStyle = ref("font-kai");
 const pages = ref([]); // 分页后的内容数组
@@ -50,6 +52,7 @@ const pageSize = 1000; // 每页字符数
 // Markdown 渲染选项
 const options = {
   html: true,
+  typographer: true,
 };
 
 // 计算属性
@@ -111,19 +114,19 @@ const loadContent = async () => {
   if (!contentUrl.value) return;
 
   try {
-    isLoading.value = true;
+    emit("update:modelValue", true);
     const response = await fetch(contentUrl.value);
     if (!response.ok) throw new Error("加载失败");
     const content = await response.text();
     pages.value = splitContent(content);
     // 优先使用路由参数
-    currentPage.value = router.currentRoute.value.params.page - 1; // 重置到第一页
+    currentPage.value = router.currentRoute.value.params.page - 1;
     error.value = null;
   } catch (e) {
     error.value = e.message;
     pages.value = [];
   } finally {
-    isLoading.value = false;
+    emit("update:modelValue", false);
   }
 };
 

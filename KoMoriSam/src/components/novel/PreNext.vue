@@ -1,9 +1,9 @@
 <template>
-  <main class="flex items-center justify-evenly w-full gap-10 lg:gap-12">
+  <main class="flex items-center justify-between my-6">
     <!-- 上一章 -->
     <button
-      class="btn btn-secondary w-[40%]"
-      :disabled="!hasPrevious"
+      class="btn btn-secondary w-[45%]"
+      :disabled="!hasPrevious || isLoadingContent"
       @click="handlePrev"
     >
       <i class="ri-arrow-left-s-line"></i> 上一章
@@ -11,8 +11,8 @@
 
     <!-- 下一章 -->
     <button
-      class="btn btn-secondary w-[40%]"
-      :disabled="!hasNext"
+      class="btn btn-secondary w-[45%]"
+      :disabled="!hasNext || isLoadingContent"
       @click="handleNext"
     >
       下一章 <i class="ri-arrow-right-s-line"></i>
@@ -26,6 +26,7 @@ import { computed } from "vue";
 const props = defineProps({
   currentId: { type: [Number, String, null], required: true },
   chapters: { type: Array, required: true },
+  isLoadingContent: { type: Boolean, required: true },
 });
 
 const emit = defineEmits(["handle-change"]);
