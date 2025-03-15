@@ -42,9 +42,9 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 // 状态管理
-// const isLoading = ref(true);
 const error = ref(null);
 const fontStyle = ref("font-kai");
+const chapterCache = ref({});
 const pages = ref([]); // 分页后的内容数组
 const currentPage = ref(props.currentPage || 0);
 const pageSize = 1000; // 每页字符数
@@ -113,12 +113,22 @@ const handlePageChange = (pageIndex) => {
 const loadContent = async () => {
   if (!contentUrl.value) return;
 
+  // 检查缓存
+  if (chapterCache.value[props.currentId]) {
+    pages.value = chapterCache.value[props.currentId];
+    return;
+  }
+
   try {
     emit("update:modelValue", true);
     const response = await fetch(contentUrl.value);
     if (!response.ok) throw new Error("加载失败");
     const content = await response.text();
-    pages.value = splitContent(content);
+    const splitPages = splitContent(content);
+
+    // 缓存章节内容
+    chapterCache.value[props.currentId] = splitPages;
+    pages.value = splitPages;
     // 优先使用路由参数
     currentPage.value = router.currentRoute.value.params.page - 1;
     error.value = null;

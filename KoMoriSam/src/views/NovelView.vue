@@ -1,8 +1,7 @@
 <template>
   <main class="flex-1">
-    <div class="drawer lg:drawer-open">
-      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content flex flex-col items-start justify-start">
+    <SideBar>
+      <template #content>
         <Loading v-if="isLoadingList" />
 
         <div
@@ -12,37 +11,41 @@
           <div class="flex-2 basis-24">
             <li
               v-if="currentChapter"
-              class="btn w-full text-left justify-start font-bold lg:py-4 mb-6"
+              class="btn lg:btn-lg w-full text-left justify-start font-bold mb-6"
             >
-              <span class="badge font-normal italic text-xs">当前章节</span>
+              <span class="badge font-normal italic text-xs lg:text-base mr-4"
+                >当前章节</span
+              >
               {{ currentChapter.name }}
             </li>
 
             <li
               v-if="latestChapter"
               @click="handleChange(latestChapter)"
-              class="btn btn-info w-full text-left justify-start font-bold lg:py-4 mb-0"
+              class="btn btn-info lg:btn-lg w-full text-left justify-start font-bold mb-0"
             >
-              <span class="badge font-normal italic text-xs">最新章节</span>
+              <span class="badge font-normal italic text-xs lg:text-base mr-4"
+                >最新章节</span
+              >
               {{ latestChapter.name }}
             </li>
 
             <PreNext
               :current-id="currentId"
-              :chapters
+              :chapters="chapters"
               :is-loading-content="isLoadingContent"
               @handle-change="handleChange"
             />
             <Markdown
               :current-id="currentId"
               :current-page="currentPage + 1"
-              :chapters
+              :chapters="chapters"
               v-model="isLoadingContent"
               @handle-loading="handleChange"
             />
             <PreNext
               :current-id="currentId"
-              :chapters
+              :chapters="chapters"
               :is-loading-content="isLoadingContent"
               @handle-change="handleChange"
               v-if="!isLoadingContent"
@@ -59,28 +62,22 @@
         </div>
         <label
           for="my-drawer-2"
-          class="btn btn-soft btn-primary btn-square btn-lg drawer-button lg:hidden fixed left-6 lg:left-12 bottom-32"
+          class="btn btn-soft btn-primary btn-square btn-lg drawer-button z-1 lg:hidden fixed left-6 lg:left-12 bottom-12 lg:bottom-32 shadow-sm"
         >
           <i class="ri-file-list-2-line"></i>
         </label>
-      </div>
-      <div class="drawer-side">
-        <label
-          for="my-drawer-2"
-          aria-label="close sidebar"
-          class="drawer-overlay"
-        ></label>
-        <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-          <aside class="flex-1 flex flex-col lg:sticky lg:top-12">
-            <ChList
-              :current-id="currentId"
-              :chapters
-              @handle-change="handleChange"
-            />
-          </aside>
-        </ul>
-      </div>
-    </div>
+      </template>
+      <template #aside>
+        <aside class="flex-1 flex flex-col lg:sticky lg:top-12">
+          <ChList
+            :current-id="currentId"
+            :chapters="chapters"
+            :readChapters="readChapters"
+            @handle-change="handleChange"
+          />
+        </aside>
+      </template>
+    </SideBar>
   </main>
 </template>
 
@@ -88,16 +85,20 @@
 import { ref, computed, onMounted, watch, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import SideBar from "@/components/ui/Layout/SideBar.vue";
 import ChList from "@/components/novel/ChList.vue";
 import PreNext from "@/components/novel/PreNext.vue";
 import Markdown from "@/components/Markdown.vue";
 import Loading from "@/components/ui/Loading.vue";
+
+import { getReadChapters, setReadChapters } from "@/utils/storageServicer";
 
 // 状态管理
 const isLoadingList = ref(true);
 const isLoadingContent = ref(true);
 const chapters = ref([]);
 const flatChapters = ref([]);
+const readChapters = ref([]);
 const currentId = ref(null);
 const currentPage = ref(0); // 当前页码
 
@@ -127,6 +128,23 @@ onMounted(async () => {
     currentId.value = route.params.chapterId
       ? Number(route.params.chapterId)
       : flatChapters.value[0]?.id;
+
+    // 检查当前章节是否需要标记为已读
+    const readList = getReadChapters();
+    if (readList) {
+      readChapters.value = readList;
+    }
+
+    const currentChapter = flatChapters.value.find(
+      (ch) => ch.id === currentId.value
+    );
+    if (
+      currentChapter &&
+      !readChapters.value.some((ch) => ch.id === currentId.value)
+    ) {
+      setReadChapters(currentChapter);
+      readChapters.value = [...readChapters.value, currentChapter];
+    }
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
@@ -136,10 +154,8 @@ onMounted(async () => {
 
 // 事件处理函数
 const handleChange = (chapter) => {
-  chapters.value.forEach((group) => {
-    const readChapter = group.options.find((ch) => ch.id === chapter.id);
-    if (readChapter) chapter.read = true;
-  });
+  const nowReadChapter = flatChapters.value.find((ch) => ch.id === chapter.id);
+  if (nowReadChapter) setReadChapters(nowReadChapter);
 
   router.push({
     name: "novel",
@@ -162,8 +178,23 @@ const handleToTop = () => {
 watch(
   () => route.params,
   ({ chapterId, page }) => {
-    currentId.value = Number(chapterId); // 转换为数字类型
-    currentPage.value = Number(page) - 1; // 转换为数字并处理页码索引
+    currentId.value = Number(chapterId);
+    currentPage.value = Number(page) - 1;
+
+    // 确保 flatChapters 已初始化
+    if (flatChapters.value.length > 0) {
+      // 检查当前章节是否需要标记为已读
+      const currentChapter = flatChapters.value.find(
+        (ch) => ch.id === currentId.value
+      );
+      if (
+        currentChapter &&
+        !readChapters.value.some((ch) => ch.id === currentId.value)
+      ) {
+        setReadChapters(currentChapter);
+        readChapters.value = [...readChapters.value, currentChapter];
+      }
+    }
   },
   { immediate: true }
 );

@@ -10,6 +10,6 @@
 </template>
 
 <script setup>
-import BasePage from "@/components/BasePage.vue";
+import BasePage from "@/components/ui/Layout/BasePage.vue";
 import meImage from "@/assets/img/me2.png";
 </script>

@@ -32,12 +32,12 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 
-// 从 localStorage 初始化主题，若不存在则默认为空字符串
-const theme = ref(JSON.parse(localStorage.getItem("theme") || '""'));
+import { getSelectedTheme, setSelectedTheme } from "@/utils/storageServicer";
 
-// 监听主题变化并保存到 localStorage
+const theme = ref(getSelectedTheme());
+
 watch(theme, (newTheme) => {
-  localStorage.setItem("theme", JSON.stringify(newTheme));
+  setSelectedTheme(newTheme);
 });
 
 const currentTheme = computed(() => {

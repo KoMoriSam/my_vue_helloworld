@@ -1,19 +1,26 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/:pathMatch(.*)*",
-      name: "NotFound",
-      component: () => import("@/views/NotFoundView.vue"),
-      meta: { title: "404! | KoMoriSam" },
+      path: "/",
+      redirect: () => ({
+        name: "home",
+      }),
     },
     {
-      path: "/",
+      path: "/home",
       name: "home",
       component: () => import("@/views/HomeView.vue"),
       meta: { title: "主页 | KoMoriSam" },
+    },
+    {
+      path: "/novel",
+      redirect: () => ({
+        name: "novel",
+        params: { chapterId: 1, page: 1 },
+      }),
     },
     {
       path: "/novel/:chapterId/page/:page",
@@ -21,7 +28,7 @@ const router = createRouter({
       component: () => import("@/views/NovelView.vue"),
       props: (route) => ({
         chapterId: Number(route.params.chapterId) || 1,
-        page: Number(route.params.page) || 1, // 默认第一页
+        page: Number(route.params.page) || 1,
       }),
       meta: { title: "小说 | KoMoriSam" },
     },
@@ -36,6 +43,12 @@ const router = createRouter({
       name: "about",
       component: () => import("@/views/AboutView.vue"),
       meta: { title: "关于 | KoMoriSam" },
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("@/views/NotFoundView.vue"),
+      meta: { title: "404! | KoMoriSam" },
     },
   ],
 });

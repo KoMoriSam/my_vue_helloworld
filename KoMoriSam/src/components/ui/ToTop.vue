@@ -1,7 +1,7 @@
 <template>
   <button
     @click="scrollToTop"
-    class="fixed right-6 lg:right-12 bottom-32 btn btn-square btn-lg btn-info"
+    class="fixed right-6 lg:right-12 bottom-12 lg:bottom-32 btn btn-square btn-soft btn-lg btn-info shadow-sm"
     :class="showButton ? 'opacity-100' : 'opacity-0'"
   >
     <i class="ri-skip-up-line"></i>
