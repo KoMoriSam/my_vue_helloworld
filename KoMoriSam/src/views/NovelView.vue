@@ -2,7 +2,7 @@
   <main class="flex-1">
     <SideBar>
       <template #content>
-        <Loading v-if="isLoadingList" />
+        <Loading v-if="novelStore.isLoadingList" />
 
         <div
           class="flex flex-col lg:flex-row m-8 lg:m-12 items-start lg:justify-evenly gap-10"
@@ -10,46 +10,29 @@
         >
           <div class="flex-2 basis-24">
             <li
-              v-if="currentChapter"
-              class="btn lg:btn-lg w-full text-left justify-start font-bold mb-6"
+              v-if="novelStore.latestChapter"
+              @click="handleChange(novelStore.latestChapter)"
+              class="btn btn-info lg:btn-lg w-full text-left justify-start font-bold mb-6"
             >
-              <span class="badge font-normal italic text-xs lg:text-base mr-4"
-                >当前章节</span
-              >
-              {{ currentChapter.name }}
+              <span class="badge font-normal italic text-xs lg:text-base mr-4">
+                最新章节
+              </span>
+              {{ novelStore.latestChapter.name }}
             </li>
 
             <li
-              v-if="latestChapter"
-              @click="handleChange(latestChapter)"
-              class="btn btn-info lg:btn-lg w-full text-left justify-start font-bold mb-0"
+              v-if="novelStore.currentChapter"
+              class="btn lg:btn-lg w-full text-left justify-start font-bold mb-0"
             >
-              <span class="badge font-normal italic text-xs lg:text-base mr-4"
-                >最新章节</span
-              >
-              {{ latestChapter.name }}
+              <span class="badge font-normal italic text-xs lg:text-base mr-4">
+                当前章节
+              </span>
+              {{ novelStore.currentChapter.chapter.name }}
             </li>
 
-            <PreNext
-              :current-id="currentId"
-              :chapters="chapters"
-              :is-loading-content="isLoadingContent"
-              @handle-change="handleChange"
-            />
-            <Markdown
-              :current-id="currentId"
-              :current-page="currentPage + 1"
-              :chapters="chapters"
-              v-model="isLoadingContent"
-              @handle-loading="handleChange"
-            />
-            <PreNext
-              :current-id="currentId"
-              :chapters="chapters"
-              :is-loading-content="isLoadingContent"
-              @handle-change="handleChange"
-              v-if="!isLoadingContent"
-            />
+            <PreNext />
+            <Markdown />
+            <PreNext v-if="!novelStore.isLoadingContent" />
           </div>
           <div class="divider lg:divider-horizontal m-0"></div>
 
@@ -69,12 +52,7 @@
       </template>
       <template #aside>
         <aside class="flex-1 flex flex-col lg:sticky lg:top-12">
-          <ChList
-            :current-id="currentId"
-            :chapters="chapters"
-            :readChapters="readChapters"
-            @handle-change="handleChange"
-          />
+          <ChList />
         </aside>
       </template>
     </SideBar>
@@ -82,8 +60,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, inject } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useNovelStore } from "@/stores/novelStore";
 
 import SideBar from "@/components/ui/Layout/SideBar.vue";
 import ChList from "@/components/novel/ChList.vue";
@@ -91,110 +70,56 @@ import PreNext from "@/components/novel/PreNext.vue";
 import Markdown from "@/components/Markdown.vue";
 import Loading from "@/components/ui/Loading.vue";
 
-import { getReadChapters, setReadChapters } from "@/utils/storageServicer";
-
-// 状态管理
-const isLoadingList = ref(true);
-const isLoadingContent = ref(true);
-const chapters = ref([]);
-const flatChapters = ref([]);
-const readChapters = ref([]);
-const currentId = ref(null);
-const currentPage = ref(0); // 当前页码
-
 // 路由相关
 const route = useRoute();
 const router = useRouter();
 
-// 当前章节名称
-const currentChapter = computed(() => {
-  return flatChapters.value.find((ch) => ch.id === currentId.value);
-});
-
-// 获取最新章节
-const latestChapter = computed(() => {
-  return flatChapters.value[flatChapters.value.length - 1];
-});
+// 状态管理
+const novelStore = useNovelStore();
 
 // 生命周期钩子
 onMounted(async () => {
-  try {
-    const res = await fetch("/assets/markdown/novel/list.json");
-    const data = await res.json();
-    chapters.value = data;
-    flatChapters.value = chapters.value.flatMap((chapter) => chapter.options);
+  await novelStore.setChapterList();
 
-    // 优先使用路由参数
-    currentId.value = route.params.chapterId
-      ? Number(route.params.chapterId)
-      : flatChapters.value[0]?.id;
-
-    // 检查当前章节是否需要标记为已读
-    const readList = getReadChapters();
-    if (readList) {
-      readChapters.value = readList;
-    }
-
-    const currentChapter = flatChapters.value.find(
-      (ch) => ch.id === currentId.value
-    );
-    if (
-      currentChapter &&
-      !readChapters.value.some((ch) => ch.id === currentId.value)
-    ) {
-      setReadChapters(currentChapter);
-      readChapters.value = [...readChapters.value, currentChapter];
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  } finally {
-    isLoadingList.value = false;
+  // 优先使用路由参数
+  if (route.query.chapter) {
+    await novelStore.setChapter(Number(route.query.chapter));
   }
+
+  await novelStore.setChapter(); // 加载默认章节
 });
 
 // 事件处理函数
-const handleChange = (chapter) => {
-  const nowReadChapter = flatChapters.value.find((ch) => ch.id === chapter.id);
-  if (nowReadChapter) setReadChapters(nowReadChapter);
-
-  router.push({
-    name: "novel",
-    params: {
-      chapterId: chapter.id,
-      page: 1, // 总是跳转到新章节的第一页
-    },
-  });
-
-  handleToTop();
-};
-
-const scrollToTop = inject("scrollToTop"); // 注入方法
-
-const handleToTop = () => {
-  scrollToTop(); // 平滑滚动到顶部
+const handleChange = async (chapter) => {
+  await novelStore.setChapter(chapter.id);
 };
 
 // 监听路由参数变化
 watch(
-  () => route.params,
-  ({ chapterId, page }) => {
-    currentId.value = Number(chapterId);
-    currentPage.value = Number(page) - 1;
+  [() => novelStore.currentChapterId, () => novelStore.currentChapterPage],
+  ([newId, newPage]) => {
+    router.push({
+      query: {
+        chapter: newId,
+        page: newPage + 1,
+      },
+    });
+  },
+  { immediate: true }
+);
 
-    // 确保 flatChapters 已初始化
-    if (flatChapters.value.length > 0) {
-      // 检查当前章节是否需要标记为已读
-      const currentChapter = flatChapters.value.find(
-        (ch) => ch.id === currentId.value
-      );
-      if (
-        currentChapter &&
-        !readChapters.value.some((ch) => ch.id === currentId.value)
-      ) {
-        setReadChapters(currentChapter);
-        readChapters.value = [...readChapters.value, currentChapter];
-      }
-    }
+watch(
+  () => route.query,
+  async ({ chapter, page }) => {
+    await novelStore.setChapter(Number(chapter), Number(page) - 1);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => novelStore.chapterList,
+  async () => {
+    await novelStore.loadChapterContent();
   },
   { immediate: true }
 );

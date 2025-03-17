@@ -1,7 +1,7 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
@@ -17,19 +17,8 @@ const router = createRouter({
     },
     {
       path: "/novel",
-      redirect: () => ({
-        name: "novel",
-        params: { chapterId: 1, page: 1 },
-      }),
-    },
-    {
-      path: "/novel/:chapterId/page/:page",
       name: "novel",
       component: () => import("@/views/NovelView.vue"),
-      props: (route) => ({
-        chapterId: Number(route.params.chapterId) || 1,
-        page: Number(route.params.page) || 1,
-      }),
       meta: { title: "小说 | KoMoriSam" },
     },
     {

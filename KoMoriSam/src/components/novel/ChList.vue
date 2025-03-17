@@ -5,16 +5,16 @@
         <details class="w-full" open>
           <summary class="font-bold lg:py-4 mb-1 lg:mb-2">章节列表</summary>
           <ul class="menu rounded-box z-1 p-2 w-full ml-0">
-            <li v-for="group in chapters" :key="group.label">
+            <li v-for="group in novelStore.chapterList" :key="group.label">
               <details open>
                 <summary class="font-bold">{{ group.label }}</summary>
                 <ul>
                   <li v-for="chapter in group.options" :key="chapter?.id">
                     <a
                       v-if="chapter"
-                      @click="handleChange(chapter)"
+                      @click="handleChange(chapter.id)"
                       :class="
-                        chapter.id === currentId
+                        chapter.id === novelStore.currentChapterId
                           ? 'bg-primary text-primary-content'
                           : ''
                       "
@@ -56,14 +56,9 @@
 
 <script setup>
 import { computed } from "vue";
+import { useNovelStore } from "@/stores/novelStore";
 
-const props = defineProps({
-  currentId: { type: [Number, String, null], required: true },
-  chapters: { type: Array, required: true },
-  readChapters: { type: Array, default: () => [] },
-});
-
-const emit = defineEmits(["handle-change"]);
+const novelStore = useNovelStore();
 
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString("zh-CN", {
@@ -81,10 +76,11 @@ const isRecent = (dateStr) => {
 };
 
 const isRead = computed(() => (chapterId) => {
-  return props.readChapters.some((item) => item && item.id === chapterId);
+  return novelStore.readChapterList.some((g) => g.chapter.id === chapterId);
 });
 
-const handleChange = (chapter) => {
-  emit("handle-change", chapter);
+const handleChange = async (newId) => {
+  await novelStore.setChapter(newId);
+  window.scrollTo({ top: 200, behavior: "smooth" });
 };
 </script>

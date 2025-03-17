@@ -3,7 +3,7 @@
     <!-- 上一章 -->
     <button
       class="btn btn-secondary w-[45%]"
-      :disabled="!hasPrevious || isLoadingContent"
+      :disabled="!hasPrevious || novelStore.isLoadingContent"
       @click="handlePrev"
     >
       <i class="ri-arrow-left-s-line"></i> 上一章
@@ -12,7 +12,7 @@
     <!-- 下一章 -->
     <button
       class="btn btn-secondary w-[45%]"
-      :disabled="!hasNext || isLoadingContent"
+      :disabled="!hasNext || novelStore.isLoadingContent"
       @click="handleNext"
     >
       下一章 <i class="ri-arrow-right-s-line"></i>
@@ -22,29 +22,22 @@
 
 <script setup>
 import { computed } from "vue";
+import { useNovelStore } from "@/stores/novelStore";
 
-const props = defineProps({
-  currentId: { type: [Number, String, null], required: true },
-  chapters: { type: Array, required: true },
-  isLoadingContent: { type: Boolean, required: true },
-});
+const novelStore = useNovelStore();
 
-const emit = defineEmits(["handle-change"]);
-
-// 扁平化章节列表
-const flatChapters = computed(() => props.chapters.flatMap((g) => g.options));
-
-const currentIndex = computed(() =>
-  flatChapters.value.findIndex((ch) => ch.id === props.currentId)
-);
-
-const hasPrevious = computed(() => currentIndex.value > 0);
+const hasPrevious = computed(() => novelStore.currentChapterId > 1);
 const hasNext = computed(
-  () => currentIndex.value < flatChapters.value.length - 1
+  () => novelStore.currentChapterId < novelStore.flatChapterList.length
 );
 
-const handlePrev = () =>
-  emit("handle-change", flatChapters.value[currentIndex.value - 1]);
-const handleNext = () =>
-  emit("handle-change", flatChapters.value[currentIndex.value + 1]);
+const handlePrev = () => {
+  novelStore.setChapter(novelStore.currentChapterId - 1);
+  window.scrollTo({ top: 200, behavior: "smooth" });
+};
+
+const handleNext = () => {
+  novelStore.setChapter(novelStore.currentChapterId + 1);
+  window.scrollTo({ top: 200, behavior: "smooth" });
+};
 </script>

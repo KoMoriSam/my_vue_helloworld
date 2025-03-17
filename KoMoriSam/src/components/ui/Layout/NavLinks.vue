@@ -26,7 +26,7 @@ const navLinks = ref([
   {
     name: "小说",
     icon: "ri-book-3-line lg:text-xl",
-    to: { name: "novel", params: { chapterId: 1, page: 1 } },
+    to: { name: "novel", query: { chapter: 1, page: 1 } },
   },
   {
     name: "联系",
