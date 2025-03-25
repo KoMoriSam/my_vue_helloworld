@@ -13,7 +13,12 @@
 
 <script setup>
 import { useRoute } from "vue-router";
+import { useNovelStore } from "@/stores/novelStore";
+
 const route = useRoute();
+
+// 状态管理
+const novelStore = useNovelStore();
 
 import { ref } from "vue";
 

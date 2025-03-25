@@ -3,19 +3,19 @@
     <button
       class="join-item btn"
       @click="handleChane(novelStore.currentChapterPage - 1)"
-      :disabled="novelStore.currentChapterPage === 0"
+      :disabled="novelStore.currentChapterPage === 1"
     >
       <i class="ri-arrow-left-s-line"></i>
     </button>
     <button class="join-item md:hidden btn">
-      第 {{ novelStore.currentChapterPage + 1 }} 页 / 共
+      第 {{ novelStore.currentChapterPage }} 页 / 共
       {{ novelStore.totalPages }} 页
     </button>
     <button
       v-for="(page, idx) in novelStore.totalPages"
       :key="idx"
-      @click="handleChane(idx)"
-      :class="idx === novelStore.currentChapterPage ? 'btn-primary' : ''"
+      @click="handleChane(idx + 1)"
+      :class="idx === novelStore.currentChapterPage - 1 ? 'btn-primary' : ''"
       class="hidden md:flex join-item btn"
     >
       {{ page }}
@@ -23,7 +23,7 @@
     <button
       class="join-item btn"
       @click="handleChane(novelStore.currentChapterPage + 1)"
-      :disabled="novelStore.currentChapterPage === novelStore.totalPages - 1"
+      :disabled="novelStore.currentChapterPage === novelStore.totalPages"
     >
       <i class="ri-arrow-right-s-line"></i>
     </button>
