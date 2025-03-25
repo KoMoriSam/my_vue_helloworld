@@ -22,22 +22,26 @@
 
 <script setup>
 import { computed } from "vue";
-import { useNovelStore } from "@/stores/novelStore";
+import { useRouter } from "vue-router";
+import { useNovelStore } from "@/stores/novel";
 
 const novelStore = useNovelStore();
 
+const router = useRouter();
+
 const hasPrevious = computed(() => novelStore.currentChapterId > 1);
+
 const hasNext = computed(
   () => novelStore.currentChapterId < novelStore.flatChapterList.length
 );
 
 const handlePrev = () => {
-  novelStore.setChapter(novelStore.currentChapterId - 1);
+  router.push({ query: { chapter: novelStore.currentChapterId - 1, page: 1 } }); // 修改 URL，触发 `watch` 监听
   window.scrollTo({ top: 200, behavior: "smooth" });
 };
 
 const handleNext = () => {
-  novelStore.setChapter(novelStore.currentChapterId + 1);
+  router.push({ query: { chapter: novelStore.currentChapterId + 1, page: 1 } }); // 修改 URL，触发 `watch` 监听
   window.scrollTo({ top: 200, behavior: "smooth" });
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <main class="flex-2 min-h-dvh">
+  <main class="flex-2">
     <Loading
       v-if="novelStore.currentChapterInfo && novelStore.isLoadingContent"
     />
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { useNovelStore } from "@/stores/novelStore";
+import { useNovelStore } from "@/stores/novel";
 
 import VueMarkdown from "vue-markdown-render";
 import Loading from "@/components/ui/Loading.vue";

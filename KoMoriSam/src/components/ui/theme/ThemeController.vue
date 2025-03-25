@@ -21,7 +21,7 @@
             class="theme-controller btn btn-sm btn-ghost justify-end pl-6 my-1 lg:my-1.5"
             :aria-label="style.name"
             :value="style.value"
-            v-model="theme"
+            v-model="themeStore.theme"
           />
         </div>
       </li>
@@ -30,24 +30,9 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useThemeStore } from "@/stores/theme";
 
-import { getSelectedTheme, setSelectedTheme } from "@/utils/storageServicer";
-
-const theme = ref(getSelectedTheme());
-
-watch(theme, (newTheme) => {
-  setSelectedTheme(newTheme);
-});
-
-const currentTheme = computed(() => {
-  const foundTheme = themeList.value.find((t) => t.value === theme.value);
-  return foundTheme || { icon: "ri-contrast-line" }; // 默认图标
-});
-
-const themeList = ref([
-  { name: "自动模式", icon: "ri-contrast-line", value: "default" },
-  { name: "日间模式", icon: "ri-sun-line", value: "lemonade" },
-  { name: "夜间模式", icon: "ri-moon-line", value: "forest" },
-]);
+const themeStore = useThemeStore();
+const { themeList, currentTheme } = storeToRefs(themeStore);
 </script>

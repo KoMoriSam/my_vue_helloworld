@@ -2,7 +2,7 @@
   <div class="join flex items-center justify-center m-6 lg:m-12">
     <button
       class="join-item btn"
-      @click="handleChane(novelStore.currentChapterPage - 1)"
+      @click="handleChange(novelStore.currentChapterPage - 1)"
       :disabled="novelStore.currentChapterPage === 1"
     >
       <i class="ri-arrow-left-s-line"></i>
@@ -14,7 +14,7 @@
     <button
       v-for="(page, idx) in novelStore.totalPages"
       :key="idx"
-      @click="handleChane(idx + 1)"
+      @click="handleChange(idx + 1)"
       :class="idx === novelStore.currentChapterPage - 1 ? 'btn-primary' : ''"
       class="hidden md:flex join-item btn"
     >
@@ -22,7 +22,7 @@
     </button>
     <button
       class="join-item btn"
-      @click="handleChane(novelStore.currentChapterPage + 1)"
+      @click="handleChange(novelStore.currentChapterPage + 1)"
       :disabled="novelStore.currentChapterPage === novelStore.totalPages"
     >
       <i class="ri-arrow-right-s-line"></i>
@@ -31,13 +31,18 @@
 </template>
 
 <script setup>
-import { useNovelStore } from "@/stores/novelStore";
+import { useRouter } from "vue-router";
+import { useNovelStore } from "@/stores/novel";
 
 // 状态管理
 const novelStore = useNovelStore();
 
-const handleChane = (pageIndex) => {
-  novelStore.setPage(pageIndex);
+const router = useRouter();
+
+const handleChange = (pageIndex) => {
+  router.push({
+    query: { chapter: novelStore.currentChapterId, page: pageIndex },
+  }); // 修改 URL，触发 `watch` 监听
   window.scrollTo({ top: 200, behavior: "smooth" });
 };
 </script>

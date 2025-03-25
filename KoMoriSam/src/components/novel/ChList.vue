@@ -61,11 +61,14 @@
 
 <script setup>
 import { computed } from "vue";
-import { useNovelStore } from "@/stores/novelStore";
+import { useRouter } from "vue-router";
+import { useNovelStore } from "@/stores/novel";
 
 import Loading from "@/components/ui/Loading.vue";
 
 const novelStore = useNovelStore();
+
+const router = useRouter();
 
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString("zh-CN", {
@@ -86,8 +89,8 @@ const isRead = computed(() => (chapterId) => {
   return novelStore.readChapterList.some((g) => g.chapter.id === chapterId);
 });
 
-const handleChange = async (newId) => {
-  novelStore.setChapter(newId);
+const handleChange = (newId) => {
+  router.push({ query: { chapter: newId, page: 1 } });
   window.scrollTo({ top: 200, behavior: "smooth" });
 };
 </script>

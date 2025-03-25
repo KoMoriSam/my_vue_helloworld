@@ -13,16 +13,17 @@
 
 <script setup>
 import { useRoute } from "vue-router";
-import { useNovelStore } from "@/stores/novelStore";
+import { storeToRefs } from "pinia";
+import { useNovelStore } from "@/stores/novel";
 
 const route = useRoute();
 
 // 状态管理
 const novelStore = useNovelStore();
 
-import { ref } from "vue";
+import { computed } from "vue";
 
-const navLinks = ref([
+const navLinks = computed(() => [
   {
     name: "主页",
     icon: "ri-home-5-line lg:text-xl",
@@ -31,7 +32,13 @@ const navLinks = ref([
   {
     name: "小说",
     icon: "ri-book-3-line lg:text-xl",
-    to: { name: "novel", query: { chapter: 1, page: 1 } },
+    to: {
+      name: "novel",
+      query: {
+        chapter: novelStore.currentChapterId,
+        page: novelStore.currentChapterPage,
+      },
+    },
   },
   {
     name: "联系",
