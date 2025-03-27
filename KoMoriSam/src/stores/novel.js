@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useStorage } from "@vueuse/core";
 import { useTitle } from "@vueuse/core";
 
 export const useNovelStore = defineStore("novel", () => {
-  // State
+  // 章节相关状态
   const chapterList = ref([]);
   const flatChapterList = ref([]);
   const readChapterList = useStorage("READ_CHS", []);
@@ -12,11 +12,26 @@ export const useNovelStore = defineStore("novel", () => {
   const contentCache = ref({});
   const currentChapterId = useStorage("READ_CH", 1);
   const currentChapterPage = useStorage("READ_PAGE", 1);
-  const fontStyle = useStorage("CONTENT_FONT", "font-kai");
+
+  // 阅读器样式
+  const styleConfigKeys = [
+    { key: "fontStyle", storageKey: "STYLE_FONT", default: "font-kai" },
+    { key: "fontSize", storageKey: "STYLE_FONT_SIZE", default: 24 },
+    { key: "fontGap", storageKey: "STYLE_FONT_GAP", default: 0 },
+    { key: "lineHeight", storageKey: "CONTENT_LINE_HEIGHT", default: 1.5 },
+    { key: "paraHeight", storageKey: "CONTENT_PARA_HEIGHT", default: 1.5 },
+  ];
+
+  const styleConfigs = styleConfigKeys.reduce((acc, item) => {
+    acc[item.key] = useStorage(item.storageKey, item.default);
+    return acc;
+  }, {});
+
+  // 加载状态
   const isLoadingList = ref(true);
   const isLoadingContent = ref(true);
 
-  // Getters
+  // 计算参数
   const currentChapterInfo = computed(() => {
     const chapter = flatChapterList.value.find(
       (ch) => ch.id === currentChapterId.value
@@ -44,6 +59,7 @@ export const useNovelStore = defineStore("novel", () => {
   });
 
   const totalPages = computed(() => currentChapterContent.value.length);
+
   const currentPageContent = computed(
     () => currentChapterContent.value[currentChapterPage.value - 1] || ""
   );
@@ -67,12 +83,13 @@ export const useNovelStore = defineStore("novel", () => {
   const loadChapterContent = async () => {
     if (!contentUrl.value) return;
     if (contentCache.value[currentChapterId.value]) {
+      console.log("loadChapterContent: Call cache");
       currentChapterContent.value = contentCache.value[currentChapterId.value];
       return;
     }
     try {
       isLoadingContent.value = true;
-      console.trace("loadChapterContent调用位置");
+      console.log("loadChapterContent: First loading");
       const response = await fetch(contentUrl.value);
       if (!response.ok) throw new Error("加载失败");
       const markdownContent = await response.text();
@@ -87,7 +104,7 @@ export const useNovelStore = defineStore("novel", () => {
   };
 
   const splitContent = (content) => {
-    const PAGE_SIZE = 1100;
+    const PAGE_SIZE = 1200;
     const pages = [];
     let currentPage = "";
     const paras = content.split("\n");
@@ -106,12 +123,14 @@ export const useNovelStore = defineStore("novel", () => {
 
   const setChapter = async (id) => {
     currentChapterId.value = id;
-    console.trace("setChapter调用位置");
+    console.log("setChapter:", id);
     await loadChapterContent();
+    console.log("The content is loaded!");
   };
 
   const setPage = (page) => {
     currentChapterPage.value = page;
+    console.log("setPage:", page);
   };
 
   const updateTitle = () => {
@@ -135,11 +154,20 @@ export const useNovelStore = defineStore("novel", () => {
     }
   };
 
+  const setStyle = (key, value) => {
+    styleConfigs[key].value = value;
+    console.log(`set${key.charAt(0).toUpperCase() + key.slice(1)}:`, value);
+  };
+
+  const setDefaultStyle = () => {
+    styleConfigKeys.forEach(({ key, default: defaultValue }) => {
+      styleConfigs[key].value = defaultValue;
+      console.log(`Reset ${key} to:`, defaultValue);
+    });
+  };
+
   // 监听章节变化，自动更新标题
   watch(currentChapterId, updateTitle);
-
-  // 初始化章节列表
-  onMounted(setChapterList);
 
   return {
     chapterList,
@@ -149,7 +177,7 @@ export const useNovelStore = defineStore("novel", () => {
     contentCache,
     currentChapterId,
     currentChapterPage,
-    fontStyle,
+    styleConfigs,
     isLoadingList,
     isLoadingContent,
     currentChapterInfo,
@@ -163,5 +191,7 @@ export const useNovelStore = defineStore("novel", () => {
     setPage,
     updateTitle,
     setRead,
+    setStyle,
+    setDefaultStyle,
   };
 });

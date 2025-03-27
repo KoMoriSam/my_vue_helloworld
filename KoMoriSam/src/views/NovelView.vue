@@ -3,7 +3,7 @@
     <SideBar>
       <template #content ref="target">
         <button
-          class="fixed right-6 max-md:left-6 lg:right-12 bottom-26 md:bottom-40 lg:bottom-12 btn btn-square btn-soft btn-lg btn-secondary shadow-sm z-1"
+          class="fixed right-6 lg:right-12 bottom-32 btn btn-square btn-soft btn-lg btn-secondary shadow-sm z-1 max-md:hidden"
           @click="toggle()"
         >
           <i v-if="isFullscreen" class="ri-collapse-diagonal-fill"></i>
@@ -37,9 +37,9 @@
               }}
             </li>
 
-            <PreNext />
+            <ChapterController />
             <Markdown />
-            <PreNext v-if="!novelStore.isLoadingContent" />
+            <ChapterController v-if="!novelStore.isLoadingContent" />
           </div>
           <div class="divider md:divider-horizontal m-0 p-0"></div>
 
@@ -61,16 +61,41 @@
             />
           </div>
         </div>
+        <div class="dock md:hidden">
+          <label for="my-drawer-2" @click="currentTool = 'ChapterList'">
+            <i class="ri-file-list-2-line"></i>
+            <span class="dock-label">目录</span>
+          </label>
+          <label for="my-drawer-2" @click="currentTool = 'FormatToolbox'">
+            <i class="ri-settings-3-line"></i>
+            <span class="dock-label">设置</span>
+          </label>
+          <button @click="toggle()">
+            <i v-if="isFullscreen" class="ri-collapse-diagonal-fill"></i>
+            <i v-else class="ri-expand-diagonal-fill"></i>
+            <span class="dock-label">全屏</span>
+          </button>
+        </div>
         <label
           for="my-drawer-2"
-          class="btn btn-soft btn-primary btn-square btn-lg drawer-button z-1 lg:hidden fixed max-md:left-6 md:right-6 bottom-12 md:bottom-26 shadow-sm"
+          class="btn btn-soft btn-primary btn-square btn-lg drawer-button z-1 fixed max-md:hidden md:right-6 lg:right-12 bottom-18 md:bottom-46 shadow-sm"
+          @click="currentTool = 'ChapterList'"
         >
           <i class="ri-file-list-2-line"></i>
+        </label>
+        <label
+          for="my-drawer-2"
+          class="btn btn-soft btn-primary btn-square btn-lg drawer-button z-1 fixed max-md:hidden md:right-6 lg:right-12 bottom-32 md:bottom-60 shadow-sm"
+          @click="currentTool = 'FormatToolbox'"
+        >
+          <i class="ri-settings-3-line"></i>
         </label>
       </template>
       <template #aside>
         <aside class="flex-1 flex flex-col lg:sticky lg:top-12">
-          <ChList />
+          <KeepAlive>
+            <component :is="tools[currentTool]"></component>
+          </KeepAlive>
         </aside>
       </template>
     </SideBar>
@@ -89,9 +114,10 @@ import Giscus from "@giscus/vue";
 import { useNovelStore } from "@/stores/novel";
 import { useThemeStore } from "@/stores/theme";
 
-import SideBar from "@/components/ui/Layout/SideBar.vue";
-import ChList from "@/components/novel/ChList.vue";
-import PreNext from "@/components/novel/PreNext.vue";
+import SideBar from "@/components/ui/layout/SideBar.vue";
+import ChapterList from "@/components/novel/ChapterList.vue";
+import ChapterController from "@/components/novel/ChapterController.vue";
+import FormatToolbox from "@/components/novel/FormatToolbox.vue";
 import Markdown from "@/components/Markdown.vue";
 
 // 路由相关
@@ -102,6 +128,11 @@ const router = useRouter();
 const novelStore = useNovelStore();
 const themeStore = useThemeStore();
 const isDark = usePreferredDark();
+const currentTool = ref("ChapterList");
+const tools = {
+  ChapterList,
+  FormatToolbox,
+};
 
 const currentTheme = computed(() => {
   if (themeStore.theme === "default") {
@@ -109,10 +140,10 @@ const currentTheme = computed(() => {
       return "noborder_dark";
     }
     return "noborder_light";
-  } else if (themeStore.theme === "lemonade") {
-    return "noborder_light";
-  } else if (themeStore.theme === "forest") {
-    return "noborder_dark";
+  } else if (themeStore.theme === "corporate") {
+    return "catppuccin_latte";
+  } else if (themeStore.theme === "dim") {
+    return "catppuccin_macchiato";
   }
   return "preferred_color_scheme";
 });
@@ -139,6 +170,7 @@ watch(
 
 // 初始化加载
 onMounted(async () => {
+  await novelStore.setChapterList();
   if (route.query.chapter) {
     await novelStore.setChapter(Number(route.query.chapter));
   }

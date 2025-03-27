@@ -6,9 +6,9 @@ export const useThemeStore = defineStore("theme", () => {
   const theme = useStorage("SET_THEME", "default");
 
   const themeList = ref([
-    { name: "自动模式", icon: "ri-contrast-line", value: "default" },
-    { name: "日间模式", icon: "ri-sun-line", value: "lemonade" },
-    { name: "夜间模式", icon: "ri-moon-line", value: "forest" },
+    { name: "跟随系统", icon: "ri-contrast-line", value: "default" },
+    { name: "日间模式", icon: "ri-sun-line", value: "corporate" },
+    { name: "夜间模式", icon: "ri-moon-line", value: "dim" },
   ]);
 
   const currentTheme = computed(() => {

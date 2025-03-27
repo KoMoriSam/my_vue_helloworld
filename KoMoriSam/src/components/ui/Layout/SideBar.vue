@@ -10,7 +10,9 @@
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
-      <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+      <ul
+        class="menu bg-base-200 text-base-content min-h-full m-0 p-4 w-80 items-center"
+      >
         <slot name="aside"></slot>
       </ul>
     </div>

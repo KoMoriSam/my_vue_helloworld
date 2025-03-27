@@ -14,9 +14,12 @@
       <slot></slot>
     </article>
   </main>
+  <FootBar />
 </template>
 
 <script setup>
+import FootBar from "@/components/ui/layout/FootBar.vue";
+
 const props = defineProps({
   imageSrc: {
     type: String,
