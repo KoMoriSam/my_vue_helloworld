@@ -43,14 +43,21 @@
           </div>
           <div class="divider md:divider-horizontal m-0 p-0"></div>
 
-          <div class="flex-1 mx-auto md:w-[10%] md:sticky md:top-12 md:pr-1">
+          <div
+            class="flex-1 mx-auto mb-12 md:mb-auto md:w-[10%] md:sticky md:top-12 md:pr-1 prose"
+          >
+            <h1 class="inline">{{ isTitleMap ? "本章说" : "本书说" }}</h1>
+            <button class="badge badge-info mx-2 mb-4" @click="commentToggle">
+              切换
+            </button>
             <Giscus
-              :key="novelStore.currentChapterInfo"
+              :key="novelStore.currentChapterInfo?.chapter.name"
               repo="KoMoriSam/komorisam.github.io"
               repo-id="R_kgDOJxn8KA"
               category="Announcements"
               category-id="DIC_kwDOJxn8KM4Cnp6m"
-              mapping="title"
+              :mapping="mapping"
+              term="向远方"
               strict="0"
               reactions-enabled="1"
               emit-metadata="0"
@@ -62,13 +69,13 @@
           </div>
         </div>
         <div class="dock md:hidden">
-          <label for="my-drawer-2" @click="currentTool = 'ChapterList'">
-            <i class="ri-file-list-2-line"></i>
-            <span class="dock-label">目录</span>
-          </label>
           <label for="my-drawer-2" @click="currentTool = 'FormatToolbox'">
             <i class="ri-settings-3-line"></i>
             <span class="dock-label">设置</span>
+          </label>
+          <label for="my-drawer-2" @click="currentTool = 'ChapterList'">
+            <i class="ri-file-list-2-line"></i>
+            <span class="dock-label">目录</span>
           </label>
           <button @click="toggle()">
             <i v-if="isFullscreen" class="ri-collapse-diagonal-fill"></i>
@@ -103,7 +110,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onActivated, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { usePreferredDark, useFullscreen } from "@vueuse/core";
 
@@ -134,9 +141,17 @@ const tools = {
   FormatToolbox,
 };
 
+const mapping = ref("title");
+const isTitleMap = ref(true);
+
+const commentToggle = () => {
+  isTitleMap.value = !isTitleMap.value;
+  mapping.value = isTitleMap.value ? "title" : "specific";
+};
+
 const currentTheme = computed(() => {
   if (themeStore.theme === "default") {
-    if (isDark) {
+    if (isDark.value) {
       return "noborder_dark";
     }
     return "noborder_light";
@@ -178,6 +193,19 @@ onMounted(async () => {
   if (route.query.page) {
     novelStore.setPage(Number(route.query.page));
   }
+});
+
+// 监听章节变化，自动更新标题
+watch(
+  () => [novelStore.currentChapterId, novelStore.currentChapterPage],
+  () => {
+    novelStore.updateTitle();
+  }
+);
+
+// 在组件挂载或激活时重新更新标题
+onActivated(() => {
+  novelStore.updateTitle();
 });
 
 // 事件处理函数

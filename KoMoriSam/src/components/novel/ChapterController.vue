@@ -1,8 +1,8 @@
 <template>
-  <main class="flex items-center justify-between my-6 gap-2">
+  <main class="flex items-center justify-between my-6 gap-1 md:gap-2">
     <!-- 上一章 -->
     <button
-      class="btn btn-primary px-auto"
+      class="btn btn-primary px-2 md:px-auto"
       :disabled="!hasPrevious || novelStore.isLoadingContent"
       @click="handlePrev"
     >
@@ -14,7 +14,7 @@
 
     <!-- 下一章 -->
     <button
-      class="btn btn-primary px-auto"
+      class="btn btn-primary px-2 md:px-auto"
       :disabled="!hasNext || novelStore.isLoadingContent"
       @click="handleNext"
     >

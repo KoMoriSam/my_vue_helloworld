@@ -7,7 +7,7 @@
     >
       <i class="ri-arrow-left-s-line"></i>
     </button>
-    <button class="join-item lg:hidden btn text-sm">
+    <button class="join-item lg:hidden btn text-xs md:text-sm px-2 md:px-auto">
       <span class="hidden md:inline">第</span>
       {{ novelStore.currentChapterPage }}
       <span class="hidden md:inline">页</span>

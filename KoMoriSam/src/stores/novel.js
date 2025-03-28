@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useStorage } from "@vueuse/core";
 import { useTitle } from "@vueuse/core";
 
@@ -12,6 +12,7 @@ export const useNovelStore = defineStore("novel", () => {
   const contentCache = ref({});
   const currentChapterId = useStorage("READ_CH", 1);
   const currentChapterPage = useStorage("READ_PAGE", 1);
+  const title = ref("向远方 | KoMoriSam");
 
   // 阅读器样式
   const styleConfigKeys = [
@@ -135,7 +136,8 @@ export const useNovelStore = defineStore("novel", () => {
 
   const updateTitle = () => {
     if (currentChapterInfo.value) {
-      useTitle(`${currentChapterInfo.value.chapter.name} | KoMoriSam`);
+      title.value = `${currentChapterInfo.value.chapter.name} | KoMoriSam`;
+      useTitle(title.value);
     }
   };
 
@@ -165,9 +167,6 @@ export const useNovelStore = defineStore("novel", () => {
       console.log(`Reset ${key} to:`, defaultValue);
     });
   };
-
-  // 监听章节变化，自动更新标题
-  watch(currentChapterId, updateTitle);
 
   return {
     chapterList,
