@@ -1,6 +1,6 @@
 <template>
   <BasePage
-    :imageSrc="meImage"
+    :imageSrc="`/assets/image/me1.png`"
     imageAlt="Hello Me!"
     title="你好！"
     description="这是 KoMoriSam 的个人网站"
@@ -10,6 +10,5 @@
 </template>
 
 <script setup>
-import BasePage from "@/components/ui/Layout/BasePage.vue";
-import meImage from "@/assets/img/me1.png";
+import BasePage from "@/components/ui/layout/BasePage.vue";
 </script>

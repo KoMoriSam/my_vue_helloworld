@@ -1,6 +1,6 @@
 <template>
   <BasePage
-    :imageSrc="meImage"
+    :imageSrc="`/assets/image/me3.png`"
     imageAlt="Contact Me!"
     title="联系我"
     description="可以加 QQ 和 微信 捏~"
@@ -18,6 +18,5 @@
 </template>
 
 <script setup>
-import BasePage from "@/components/ui/Layout/BasePage.vue";
-import meImage from "@/assets/img/me3.png";
+import BasePage from "@/components/ui/layout/BasePage.vue";
 </script>
