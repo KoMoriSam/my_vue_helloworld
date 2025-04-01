@@ -1,12 +1,9 @@
 <template>
   <li
-    :class="[
-      'btn lg:btn-lg w-full text-left justify-start font-bold',
-      additionalClasses,
-    ]"
+    :class="['btn text-left justify-start font-bold', additionalClasses]"
     @click="onClick"
   >
-    <span class="badge font-normal italic text-xs lg:text-base mr-4">
+    <span class="badge badge-sm mr-4">
       {{ badgeText }}
     </span>
     {{ content }}

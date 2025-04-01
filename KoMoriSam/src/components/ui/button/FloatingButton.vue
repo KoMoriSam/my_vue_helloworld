@@ -1,14 +1,14 @@
 <template>
   <label
     :class="[
-      'md:btn md:btn-soft md:btn-square md:btn-lg md:drawer-button md:z-1 md:fixed md:shadow-sm md:right-6 lg:right-12',
+      'lg:btn lg:btn-soft lg:btn-square lg:btn-lg lg:drawer-button lg:z-1 lg:fixed lg:shadow-sm lg:right-6',
       positionClasses,
       buttonClass,
     ]"
     @click="onClick"
   >
     <i :class="icon"></i>
-    <span class="dock-label md:hidden">{{ label }}</span>
+    <span class="dock-label lg:hidden">{{ label }}</span>
   </label>
 </template>
 
@@ -28,7 +28,7 @@ defineProps({
   },
   buttonClass: {
     type: String,
-    default: "md:btn-primary",
+    default: "lg:btn-primary",
   },
   onClick: {
     type: Function,

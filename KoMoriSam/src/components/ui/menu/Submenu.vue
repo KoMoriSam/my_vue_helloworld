@@ -1,9 +1,9 @@
 <template>
-  <main class="menu">
+  <main class="menu w-fit">
     <ul>
       <li>
         <details open>
-          <summary>{{ title }}</summary>
+          <summary class="font-bold text-xl">{{ title }}</summary>
           <ul>
             <slot></slot>
           </ul>
