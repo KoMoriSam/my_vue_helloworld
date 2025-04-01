@@ -1,17 +1,19 @@
 <template>
-  <li
-    :class="['btn text-left justify-start font-bold', additionalClasses]"
-    @click="onClick"
-  >
-    <span class="badge badge-sm mr-4">
-      {{ badgeText }}
-    </span>
-    {{ content }}
-  </li>
+  <ul>
+    <li
+      :class="['btn text-left justify-start font-bold', additionalClasses]"
+      @click="onClick"
+    >
+      <span class="badge badge-sm mr-4">
+        {{ badgeText }}
+      </span>
+      {{ content }}
+    </li>
+  </ul>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   badgeText: {
     type: String,
     required: true,

@@ -9,7 +9,7 @@
         <i class="ri-subtract-line"></i>
       </button>
       <input
-        class="input join-item text-center w-36"
+        class="input validator join-item text-center w-36"
         type="Number"
         :step="step"
         :min="min"

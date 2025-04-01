@@ -22,10 +22,7 @@ const components = {
 
 // 切换页面的方法
 const toggleComponent = () => {
-  if (currentComponent.value === "BookDetail") {
-    currentComponent.value = "Reader";
-  } else {
-    currentComponent.value = "BookDetail";
-  }
+  currentComponent.value =
+    currentComponent.value === "BookDetail" ? "Reader" : "BookDetail";
 };
 </script>

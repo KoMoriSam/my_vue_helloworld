@@ -1,8 +1,6 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-base-100">
-    <NavBar />
-    <router-view />
-  </div>
+  <NavBar />
+  <router-view />
 </template>
 
 <script setup>

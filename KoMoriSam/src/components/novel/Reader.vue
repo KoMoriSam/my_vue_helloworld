@@ -2,7 +2,7 @@
   <main class="flex-1 m-0 p-0 w-full h-full">
     <SideBar>
       <template #content ref="mainContainer">
-        <div class="flex-2 basis-xl m-6 max-lg:mb-0" ref="scrollRef">
+        <section class="flex-2 basis-xl m-6 max-lg:mb-0" ref="scrollRef">
           <ChapterInfo
             v-if="novelStore.latestChapter"
             badgeText="最新章节"
@@ -22,12 +22,12 @@
           <ChapterController />
           <Markdown />
           <ChapterController v-if="!novelStore.isLoadingContent" />
-        </div>
+        </section>
 
-        <div
-          class="flex-1 mx-12 max-md:mt-0 md:my-12 max-lg:mb-24 md:w-[10%] md:sticky md:top-12 basis-xs"
+        <section
+          class="flex-1 mx-12 max-md:mt-0 md:w-[10%] md:sticky md:top-12 basis-xs"
         >
-          <div class="prose mb-3">
+          <article class="prose mb-3">
             <h1 class="inline">
               {{ currentMapping === "title" ? "本章说" : "本书说" }}
             </h1>
@@ -37,7 +37,7 @@
             >
               {{ currentMapping === "title" ? "切换本书说" : "切换本章说" }}
             </button>
-          </div>
+          </article>
           <Giscus
             :key="novelStore.currentChapterInfo?.chapter.name"
             repo="KoMoriSam/komorisam.github.io"
@@ -54,9 +54,9 @@
             lang="zh-CN"
             loading="lazy"
           />
-        </div>
+        </section>
 
-        <div class="max-lg:dock">
+        <aside class="max-lg:dock">
           <FloatingButton
             for="my-drawer-2"
             icon="ri-settings-3-line"
@@ -74,17 +74,6 @@
             :onClick="() => (currentTool = 'ChapterList')"
           />
           <FloatingButton
-            :icon="
-              isFullscreen
-                ? 'ri-collapse-diagonal-fill'
-                : 'ri-expand-diagonal-fill'
-            "
-            label="全屏"
-            position-classes="lg:bottom-60"
-            button-class="lg:btn-secondary"
-            :onClick="toggle"
-          />
-          <FloatingButton
             icon="ri-arrow-go-back-line"
             label="封面页"
             position-classes="lg:bottom-46"
@@ -95,6 +84,17 @@
                 toggleComponent();
               }
             "
+          />
+          <FloatingButton
+            :icon="
+              isFullscreen
+                ? 'ri-collapse-diagonal-fill'
+                : 'ri-expand-diagonal-fill'
+            "
+            label="全屏"
+            position-classes="lg:bottom-60"
+            button-class="lg:btn-secondary"
+            :onClick="toggle"
           />
           <FloatingButton
             icon="ri-skip-up-line"
@@ -110,12 +110,16 @@
             button-class="lg:btn-info"
             :onClick="() => scrollToBottom()"
           />
-        </div>
+        </aside>
       </template>
 
       <template #aside>
         <KeepAlive>
-          <component :is="tools[currentTool]"></component>
+          <component
+            :is="tools[currentTool]"
+            :toggleComponent="toggleComponent"
+            :currentComponent="currentComponent"
+          ></component>
         </KeepAlive>
       </template>
     </SideBar>
@@ -152,7 +156,7 @@ const tools = {
   ChapterList,
   FormatToolbox,
 };
-defineProps({
+const props = defineProps({
   toggleComponent: {
     type: Function,
     required: true,

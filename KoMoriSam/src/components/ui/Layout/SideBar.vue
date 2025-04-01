@@ -1,12 +1,12 @@
 <template>
-  <div class="drawer lg:drawer-open">
+  <section class="drawer lg:drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-    <main
-      class="drawer-content flex flex-wrap h-full w-full items-start justify-center gap-4 lg:pr-16"
+    <section
+      class="drawer-content flex flex-wrap h-full w-full items-start justify-center gap-4 lg:pr-16 pb-16 lg:pb-12"
     >
       <slot name="content"></slot>
-    </main>
-    <div class="drawer-side">
+    </section>
+    <aside class="drawer-side">
       <label
         for="my-drawer-2"
         aria-label="close sidebar"
@@ -19,6 +19,6 @@
           <slot name="aside"></slot>
         </aside>
       </ul>
-    </div>
-  </div>
+    </aside>
+  </section>
 </template>

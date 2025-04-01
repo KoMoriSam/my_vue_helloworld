@@ -1,12 +1,14 @@
 <template>
-  <div class="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
+  <footer
+    class="footer sm:footer-horizontal bg-base-200 text-base-content p-10"
+  >
     <aside>
       <img src="/assets/image/welcome.png" alt="welcome!" class="h-5" />
-      <p>
+      <small>
         KoMoriSam
         <br />
         © 2025
-      </p>
+      </small>
     </aside>
     <nav>
       <h6 class="footer-title">社交帐号</h6>
@@ -22,5 +24,5 @@
         </a>
       </div>
     </nav>
-  </div>
+  </footer>
 </template>

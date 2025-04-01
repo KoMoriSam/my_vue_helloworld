@@ -2,14 +2,14 @@
   <main
     class="flex-1 flex flex-wrap m-12 items-start justify-center lg:justify-evenly gap-4"
   >
-    <div class="hero basis-2xl">
-      <div class="hero-content flex-col lg:flex-row">
+    <section class="hero basis-2xl">
+      <figure class="hero-content flex-col lg:flex-row">
         <img
           src="/assets/image/cover.png"
           alt="向远方"
           class="max-w-full sm:max-w-3xs rounded-lg shadow-2xl lg:mr-6 mb-6"
         />
-        <div>
+        <figcaption>
           <h1 class="text-5xl font-bold">向远方</h1>
           <p class="py-6">
             慌张中，才学会张口……<br />
@@ -32,16 +32,16 @@
             additionalClasses="w-full my-6"
             :onClick="() => toggleComponent()"
           />
-        </div>
-      </div>
-    </div>
+        </figcaption>
+      </figure>
+    </section>
 
-    <div class="basis-xs">
+    <section class="basis-xs">
       <ChapterList
         :toggleComponent="toggleComponent"
         :currentComponent="currentComponent"
       />
-    </div>
+    </section>
 
     <Giscus
       class="basis-sm"
@@ -79,7 +79,7 @@ const novelStore = useNovelStore();
 const themeStore = useThemeStore();
 
 const router = useRouter();
-defineProps({
+const props = defineProps({
   toggleComponent: {
     type: Function,
     required: true,

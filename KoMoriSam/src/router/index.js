@@ -14,15 +14,15 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: () => ({
-        name: "home",
-      }),
-    },
-    {
-      path: "/home",
       name: "home",
       component: () => import("@/views/HomeView.vue"),
       meta: { title: "主页 | KoMoriSam" },
+    },
+    {
+      path: "/home",
+      redirect: () => ({
+        name: "home",
+      }),
     },
     {
       path: "/novel",

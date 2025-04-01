@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   icon: {
     type: String,
     required: true,

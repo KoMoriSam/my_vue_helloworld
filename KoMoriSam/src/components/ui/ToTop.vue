@@ -3,6 +3,7 @@
     @click="scrollToTop"
     class="fixed right-6 lg:right-12 bottom-18 btn btn-square btn-soft btn-lg btn-info shadow-sm"
     :class="showButton ? '' : 'hidden'"
+    title="回到顶部"
   >
     <i class="ri-skip-up-line"></i>
   </button>

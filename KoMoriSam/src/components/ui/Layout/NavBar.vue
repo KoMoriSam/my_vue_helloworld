@@ -1,6 +1,6 @@
 <template>
-  <div class="navbar bg-base-100 shadow-sm">
-    <div class="navbar-start">
+  <header class="navbar bg-base-100 shadow-sm">
+    <nav class="navbar-start">
       <a
         @click="router.push('/')"
         class="hidden lg:btn lg:btn-ghost lg:text-xl"
@@ -18,8 +18,8 @@
           <NavLinks />
         </ul>
       </div>
-    </div>
-    <div class="navbar-center">
+    </nav>
+    <nav class="navbar-center">
       <a @click="router.push('/')" class="lg:hidden btn btn-ghost text-xl">
         <img src="/assets/image/logo.png" alt="KoMoriSam" class="h-8" />
       </a>
@@ -28,11 +28,11 @@
           <NavLinks />
         </ul>
       </div>
-    </div>
-    <div class="navbar-end">
+    </nav>
+    <nav class="navbar-end">
       <ThemeController />
-    </div>
-  </div>
+    </nav>
+  </header>
 </template>
 
 <script setup>
