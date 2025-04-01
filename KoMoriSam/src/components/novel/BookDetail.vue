@@ -7,7 +7,7 @@
         <img
           src="/assets/image/cover.png"
           alt="向远方"
-          class="max-w-3xs rounded-lg shadow-2xl lg:mr-6"
+          class="max-w-full sm:max-w-3xs rounded-lg shadow-2xl lg:mr-6 mb-6"
         />
         <div>
           <h1 class="text-5xl font-bold">向远方</h1>
@@ -22,9 +22,13 @@
             开始阅读
           </button>
           <ChapterInfo
-            v-if="novelStore.readChapterList.length > 0"
-            badgeText="继续上次阅读"
-            :content="novelStore.currentChapterInfo?.chapter.name"
+            v-if="novelStore.currentChapterInfo"
+            badgeText="继续阅读"
+            :content="
+              novelStore.readChapterList.length > 0
+                ? novelStore.currentChapterInfo?.chapter.name
+                : ''
+            "
             additionalClasses="w-full my-6"
             :onClick="() => toggleComponent()"
           />
@@ -51,7 +55,7 @@
       reactions-enabled="1"
       emit-metadata="0"
       input-position="top"
-      :theme="currentTheme"
+      :theme="themeStore.giscusTheme"
       lang="zh-CN"
       loading="lazy"
     />
@@ -60,9 +64,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { usePreferredDark } from "@vueuse/core";
 import Giscus from "@giscus/vue";
 
 import { useNovelStore } from "@/stores/novel";
@@ -74,7 +77,7 @@ import FootBar from "@/components/ui/layout/FootBar.vue";
 
 const novelStore = useNovelStore();
 const themeStore = useThemeStore();
-const isDark = usePreferredDark();
+
 const router = useRouter();
 defineProps({
   toggleComponent: {
@@ -85,18 +88,6 @@ defineProps({
     type: String,
     required: true,
   },
-});
-
-// 当前主题
-const currentTheme = computed(() => {
-  if (themeStore.theme === "default") {
-    return isDark.value ? "noborder_dark" : "noborder_light";
-  } else if (themeStore.theme === "corporate") {
-    return "catppuccin_latte";
-  } else if (themeStore.theme === "dim") {
-    return "catppuccin_macchiato";
-  }
-  return "preferred_color_scheme";
 });
 
 // 初始化加载

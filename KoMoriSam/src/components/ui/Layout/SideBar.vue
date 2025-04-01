@@ -2,7 +2,7 @@
   <div class="drawer lg:drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
     <main
-      class="drawer-content flex flex-wrap h-full w-full items-start justify-center gap-4 lg:pr-12"
+      class="drawer-content flex flex-wrap h-full w-full items-start justify-center gap-4 lg:pr-16"
     >
       <slot name="content"></slot>
     </main>

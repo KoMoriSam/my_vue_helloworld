@@ -1,6 +1,6 @@
 <template>
   <main
-    class="flex-1 flex flex-col md:flex-row mx-12 my-12 items-start md:items-center justify-center md:justify-evenly gap-4"
+    class="flex-1 flex flex-col md:flex-row mx-12 my-12 items-start md:items-center justify-center md:justify-evenly gap-12"
   >
     <img
       :src="imageSrc"

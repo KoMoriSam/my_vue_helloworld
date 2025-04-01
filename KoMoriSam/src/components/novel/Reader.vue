@@ -2,7 +2,7 @@
   <main class="flex-1 m-0 p-0 w-full h-full">
     <SideBar>
       <template #content ref="mainContainer">
-        <div class="flex-2 basis-xl m-12 max-lg:mb-0" ref="scrollRef">
+        <div class="flex-2 basis-xl m-6 max-lg:mb-0" ref="scrollRef">
           <ChapterInfo
             v-if="novelStore.latestChapter"
             badgeText="最新章节"
@@ -50,7 +50,7 @@
             reactions-enabled="1"
             emit-metadata="0"
             input-position="top"
-            :theme="currentTheme"
+            :theme="themeStore.giscusTheme"
             lang="zh-CN"
             loading="lazy"
           />
@@ -89,7 +89,12 @@
             label="封面页"
             position-classes="lg:bottom-46"
             button-class="lg:btn-secondary"
-            :onClick="() => toggleComponent()"
+            :onClick="
+              () => {
+                scrollToTop(0);
+                toggleComponent();
+              }
+            "
           />
           <FloatingButton
             icon="ri-skip-up-line"
@@ -120,7 +125,7 @@
 <script setup>
 import { ref, computed, onMounted, onActivated, watch, onUpdated } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { usePreferredDark, useFullscreen } from "@vueuse/core";
+import { useFullscreen } from "@vueuse/core";
 import Giscus from "@giscus/vue";
 
 import { useNovelStore } from "@/stores/novel";
@@ -141,7 +146,7 @@ const router = useRouter();
 // 状态管理
 const novelStore = useNovelStore();
 const themeStore = useThemeStore();
-const isDark = usePreferredDark();
+
 const currentTool = ref("ChapterList");
 const tools = {
   ChapterList,
@@ -165,18 +170,6 @@ const commentToggle = () => {
   currentMapping.value =
     currentMapping.value === "title" ? "specific" : "title";
 };
-
-// 当前主题
-const currentTheme = computed(() => {
-  if (themeStore.theme === "default") {
-    return isDark.value ? "noborder_dark" : "noborder_light";
-  } else if (themeStore.theme === "corporate") {
-    return "catppuccin_latte";
-  } else if (themeStore.theme === "dim") {
-    return "catppuccin_macchiato";
-  }
-  return "preferred_color_scheme";
-});
 
 // 监听路由参数变化
 watch(
@@ -231,8 +224,8 @@ const handleChange = (chapter) => {
 const mainContainer = ref(null);
 const { isFullscreen, toggle } = useFullscreen(mainContainer);
 
-const scrollToTop = () => {
-  window.scrollTo({ top: 110, behavior: "smooth" });
+const scrollToTop = (position = 110) => {
+  window.scrollTo({ top: position, behavior: "smooth" });
 };
 
 const scrollRef = ref(null);

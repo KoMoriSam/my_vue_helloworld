@@ -1,7 +1,7 @@
 <template>
   <div class="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
     <aside>
-      <img src="@/assets/img/welcome.png" alt="welcome!" class="h-5" />
+      <img src="/assets/image/welcome.png" alt="welcome!" class="h-5" />
       <p>
         KoMoriSam
         <br />
