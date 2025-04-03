@@ -25,7 +25,7 @@
         </section>
 
         <section
-          class="flex-1 mx-12 max-md:mt-0 md:w-[10%] md:sticky md:top-12 basis-xs"
+          class="flex-1 mx-12 max-lg:mt-0 mt-6 md:w-[10%] md:sticky md:top-12 basis-xs"
         >
           <article class="prose mb-3">
             <h1 class="inline">

@@ -7,10 +7,12 @@
   >
     <!-- 可选：插入额外内容 -->
     <address class="join max-sm:join-vertical">
-      <a class="join-item btn btn-info text-info-content no-underline"
+      <a
+        class="join-item btn btn-info text-info-content no-underline text-left justify-start"
         ><i class="ri-qq-fill"></i> 3593516798</a
       >
-      <a class="join-item btn btn-info text-info-content no-underline"
+      <a
+        class="join-item btn btn-info text-info-content no-underline text-left justify-start"
         ><i class="ri-wechat-fill"></i> MoriSam2023</a
       >
     </address>
